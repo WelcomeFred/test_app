@@ -11,13 +11,22 @@ struct OnboardingView: View {
     @StateObject private var viewModel = OnboardingViewModel()
     
     var body: some View {
+        NavigationStack {
+            onboardingContent
+                .navigationDestination(isPresented: $viewModel.shouldShowGenderSelection) {
+                    GenderSelectionView()
+                }
+        }
+    }
+    
+    private var onboardingContent: some View {
         ZStack {
             // Main background
             Color(red: 0.96, green: 0.95, blue: 0.93)
                 .ignoresSafeArea()
             
             VStack(spacing: 0) {
-                            Image("img1")
+                            Image("launch")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(height: UIScreen.main.bounds.height * 0.609)
