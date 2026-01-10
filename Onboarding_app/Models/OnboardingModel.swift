@@ -20,3 +20,4 @@ struct NutritionalData {
     let fats: Double
 }
 
+
