@@ -11,17 +11,6 @@ struct GenderSelectionView: View {
     @StateObject private var viewModel = GenderSelectionViewModel()
     @Environment(\.dismiss) var dismiss
     
-    private var progressBarColor: Color {
-        switch viewModel.selectedGender {
-        case .female:
-            return .purple
-        case .male:
-            return .orange
-        default:
-            return .orange
-        }
-    }
-    
     var body: some View {
         ZStack {
             // Main background
@@ -30,38 +19,52 @@ struct GenderSelectionView: View {
             
             VStack(spacing: 0) {
                 // Navigation bar with back button and progress bar
-                VStack(spacing: 16) {
-                    HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
-                            Image("back")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 24, height: 24)
-                        }
-                        Spacer()
+                HStack(spacing: 12) {
+                    // Back button
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image("back")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 42, height: 42)
+                            .padding(12)
+                            .clipShape(Circle())
                     }
-                    .padding(.horizontal, 20)
-                    .padding(.top, 16)
+                    .frame(width: 42, height: 42)
                     
-                    // Progress bar
+                    Spacer()
+                    
+                    // Progress bar (centered)
                     GeometryReader { geometry in
                         ZStack(alignment: .leading) {
-                            Rectangle()
+                            Capsule()
                                 .fill(Color.gray.opacity(0.2))
                                 .frame(height: 4)
-                                .cornerRadius(2)
                             
-                            Rectangle()
-                                .fill(progressBarColor)
-                                .frame(width: geometry.size.width * 0.5, height: 4)
-                                .cornerRadius(2)
+                            Capsule()
+                                .fill(Color(
+                                    red: 147/255,
+                                    green: 27/255,
+                                    blue: 255/255
+                                ))
+                                .frame(
+                                    width: geometry.size.width * viewModel.progress,
+                                    height: 4
+                                )
                         }
                     }
                     .frame(height: 4)
-                    .padding(.horizontal, 20)
+                    .frame(maxWidth: 200)
+                    
+                    Spacer()
+                    
+                    // Invisible spacer to balance the back button
+                    Color.clear
+                        .frame(width: 42, height: 42)
                 }
+                .padding(.horizontal, 20)
+                .padding(.top, 60)
                 .padding(.bottom, 32)
                 
                 // Title and subtitle
@@ -86,8 +89,11 @@ struct GenderSelectionView: View {
                         imageName: "female",
                         title: "Female",
                         isSelected: viewModel.selectedGender == .female,
-                        color: .purple
-                    ) {
+                        color: Color(
+                            red: 147/255,
+                            green: 27/255,
+                            blue: 255/255
+                        )                    ) {
                         viewModel.selectGender(.female)
                     }
                     
@@ -106,7 +112,8 @@ struct GenderSelectionView: View {
                 
                 // Prefer not to say button
                 Button(action: {
-                    viewModel.selectGender(.preferNotToSay)
+//                    viewModel.selectGender(.preferNotToSay)
+                    print("Prefer not to say")
                 }) {
                     Text("Prefer not to say?")
                         .font(.system(size: 16, weight: .regular))
@@ -138,50 +145,71 @@ struct GenderSelectionView: View {
             }
         }
         .ignoresSafeArea(edges: .top)
+        .navigationBarBackButtonHidden(true)
+        .navigationBarHidden(true)
     }
 }
-
 struct GenderCard: View {
     let imageName: String
     let title: String
     let isSelected: Bool
     let color: Color
     let action: () -> Void
-    
+
     var body: some View {
         Button(action: action) {
-            VStack(spacing: 12) {
+            VStack(spacing: 0) {
                 ZStack(alignment: .topTrailing) {
                     Image(imageName)
                         .resizable()
                         .scaledToFill()
-                        .frame(height: 200)
+                        .frame(height: 220)
                         .clipped()
-                        .cornerRadius(16)
-                    
+
+                    // 🔺 Corner ribbon + checkmark
                     if isSelected {
-                        Image(systemName: "checkmark.circle.fill")
-                            .foregroundColor(color)
-                            .font(.system(size: 24))
-                            .padding(8)
+                        ZStack {
+                            Triangle()
+                                .fill(color)
+                                .frame(width: 60, height: 60)
+
+                            Image(systemName: "checkmark")
+                                .foregroundColor(.white)
+                                .font(.system(size: 16, weight: .bold))
+                                .offset(x: 10, y: -10)
+                        }
                     }
                 }
-                
+
                 Text(title)
-                    .font(.system(size: 18, weight: .semibold))
-                    .foregroundColor(.black)
+                    .font(.system(size: 20, weight: .semibold))
+                    .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+                    .background(color)
             }
-            .padding(10)
-            .background(isSelected ? color.opacity(0.1) : Color.gray.opacity(0.1))
+            .clipShape(RoundedRectangle(cornerRadius: 24))
             .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(isSelected ? color : Color.gray.opacity(0.3), lineWidth: isSelected ? 2 : 1)
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(isSelected ? color : Color.clear, lineWidth: 3)
             )
-            .cornerRadius(16)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
     }
 }
+
+struct Triangle: Shape {
+    func path(in rect: CGRect) -> Path {
+        var path = Path()
+        path.move(to: .zero)
+        path.addLine(to: CGPoint(x: rect.width, y: 0))
+        path.addLine(to: CGPoint(x: rect.width, y: rect.height))
+        path.closeSubpath()
+        return path
+    }
+}
+
+
 
 #Preview {
     GenderSelectionView()
