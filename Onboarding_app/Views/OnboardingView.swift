@@ -69,7 +69,7 @@ struct OnboardingView: View {
                         .lineLimit(2)
                         .padding(.horizontal, 0)
                     
-                    Spacer()
+                    Spacer(minLength: 0)
                     
                     ZStack {
                         Color.white

@@ -11,12 +11,19 @@ import SwiftUI
 enum Gender: String {
     case male
     case female
-    case preferNotToSay
+//    case preferNotToSay
 }
 
 class GenderSelectionViewModel: ObservableObject {
     @Published var selectedGender: Gender?
     @Published var shouldNavigateToNext: Bool = false
+    
+    let currentPage: Int = 1
+    let totalPages: Int = 8
+    
+    var progress: Double {
+        Double(currentPage) / Double(totalPages)
+    }
     
     func selectGender(_ gender: Gender) {
         selectedGender = gender

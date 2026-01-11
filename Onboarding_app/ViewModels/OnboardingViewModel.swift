@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 class OnboardingViewModel: ObservableObject {
-    @Published var currentPage: Int = 1
+//    @Published var currentPage: Int = 1
     @Published var isOnboardingComplete: Bool = false
     @Published var shouldShowGenderSelection: Bool = false
     
