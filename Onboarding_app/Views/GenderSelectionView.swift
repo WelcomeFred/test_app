@@ -108,7 +108,7 @@ struct GenderSelectionView: View {
                     }
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 24)
+                .padding(.bottom, 40)
                 
                 // Prefer not to say button
                 Button(action: {
@@ -156,6 +156,8 @@ struct GenderCard: View {
     let color: Color
     let action: () -> Void
 
+    private let radius: CGFloat = 24
+
     var body: some View {
         Button(action: action) {
             VStack(spacing: 0) {
@@ -164,9 +166,9 @@ struct GenderCard: View {
                         .resizable()
                         .scaledToFill()
                         .frame(height: 220)
+                        .cornerRadius(radius)
                         .clipped()
 
-                    // 🔺 Corner ribbon + checkmark
                     if isSelected {
                         ZStack {
                             Triangle()
@@ -183,15 +185,20 @@ struct GenderCard: View {
 
                 Text(title)
                     .font(.system(size: 20, weight: .semibold))
-                    .foregroundColor(.white)
+                    .foregroundColor(isSelected ? .white : .black)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 12)
-                    .background(color)
+                    .background(isSelected ? color : Color.clear)
             }
-            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .padding(8)
+            .background(isSelected ? color : Color.clear)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
             .overlay(
-                RoundedRectangle(cornerRadius: 24)
-                    .stroke(isSelected ? color : Color.clear, lineWidth: 3)
+                RoundedRectangle(cornerRadius: radius)
+                    .stroke(
+                        isSelected ? color : Color.gray.opacity(0.3),
+                        lineWidth: isSelected ? 2 : 1
+                    )
             )
         }
         .buttonStyle(.plain)
