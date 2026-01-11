@@ -12,6 +12,15 @@ struct ExerciseFrequencyView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            exerciseFrequencyContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    WeightInputView()
+                }
+        }
+    }
+    
+    private var exerciseFrequencyContent: some View {
         ZStack {
             // Main background
             Color.white
