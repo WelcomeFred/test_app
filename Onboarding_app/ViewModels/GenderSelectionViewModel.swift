@@ -18,7 +18,7 @@ class GenderSelectionViewModel: ObservableObject {
     @Published var selectedGender: Gender?
     @Published var shouldNavigateToNext: Bool = false
     
-    let currentPage: Int = 1
+    let currentPage: Int = 2
     let totalPages: Int = 8
     
     var progress: Double {

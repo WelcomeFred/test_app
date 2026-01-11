@@ -12,6 +12,15 @@ struct GenderSelectionView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            genderSelectionContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    ExerciseFrequencyView()
+                }
+        }
+    }
+    
+    private var genderSelectionContent: some View {
         ZStack {
             // Main background
             Color(red: 0.96, green: 0.95, blue: 0.93)
