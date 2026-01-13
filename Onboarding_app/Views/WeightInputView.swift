@@ -130,7 +130,7 @@ struct WeightInputView: View {
                 if let bmiMessage = viewModel.bmiMessage {
                     VStack(alignment: .leading, spacing: 4) {
                         Text(bmiMessage.title)
-                            .font(.system(size: 16, weight: .bold))
+                            .font(.system(size: 14, weight: .bold))
                             .foregroundColor(.white)
                         
                         Text(bmiMessage.subtitle)
@@ -181,7 +181,11 @@ struct UnitButton: View {
                 .foregroundColor(isSelected ? .white : .black)
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
-                .background(isSelected ? Color.orange : Color.gray.opacity(0.1))
+                .background(isSelected ? Color(
+                                red: 234/255,
+                                green: 121/255,
+                                blue: 97/255
+                            ): Color.gray.opacity(0.1))
                 .cornerRadius(12)
         }
         .buttonStyle(.plain)
@@ -194,52 +198,69 @@ struct WeightSlider: View {
     let maxValue: Double
     let unit: String
     
+    @State private var dragOffset: CGFloat = 0
+    @GestureState private var isDragging = false
+    
+    private let stepWidth: CGFloat = 7
+    
     var body: some View {
         VStack(spacing: 0) {
-            // Ruler with ticks and scrollable
             GeometryReader { geometry in
-                ZStack(alignment: .leading) {
+                ZStack {
+                    // Ruler background
+                    Rectangle()
+                        .fill(Color.clear)
+                        .frame(height: 50)
+                        .contentShape(Rectangle())
+                    
                     // Ruler ticks
-                    ForEach(0..<Int(maxValue - minValue) + 1, id: \.self) { index in
-                        let tickValue = minValue + Double(index)
-                        let isMajorTick = Int(tickValue).isMultiple(of: 5)
-                        let isMinorTick = !isMajorTick
-                        let shouldShowLabel = isMajorTick || (Int(tickValue) >= 120 && Int(tickValue) <= 135)
-                        let position = CGFloat((tickValue - minValue) / (maxValue - minValue)) * geometry.size.width
-                        
-                        VStack(spacing: 0) {
-                            Rectangle()
-                                .fill(Color.gray.opacity(0.3))
-                                .frame(width: 1, height: isMajorTick ? 20 : (isMinorTick ? 10 : 5))
-                            
-                            if shouldShowLabel {
-                                Text("\(Int(tickValue))")
-                                    .font(.system(size: 10))
-                                    .foregroundColor(.gray)
-                                    .padding(.top, 4)
+                    HStack(spacing: 0) {
+                        ForEach(Int(minValue)...Int(maxValue), id: \.self) { weight in
+                            VStack(spacing: 0) {
+                                Rectangle()
+                                    .fill(Color.gray.opacity(0.3))
+                                    .frame(width: 2, height: weight % 5 == 0 ? 25 : 10)
                             }
+                            .frame(width: stepWidth)
                         }
-                        .offset(x: position - 0.5)
                     }
+                    .offset(x: dragOffset + geometry.size.width / 2 - CGFloat(value - minValue) * stepWidth)
                     
-                    // Current value indicator (thick blue bar) - centered
-                    let centerPosition = CGFloat((value - minValue) / (maxValue - minValue)) * geometry.size.width
-                    
+                    // Current value indicator (centered)
                     Rectangle()
                         .fill(Color.blue)
                         .frame(width: 4, height: 30)
-                        .offset(x: centerPosition - 2)
+                        .position(x: geometry.size.width / 2, y: 25)
                 }
+                .gesture(
+                    DragGesture()
+                        .onChanged { gesture in
+                            let translation = gesture.translation.width
+                            dragOffset = translation
+                            
+                            // Հաշվարկել նոր արժեքը
+                            let steps = translation / stepWidth
+                            let newValue = value - Double(steps)
+                            
+                            // Սահմանափակել արժեքը
+                            let clampedValue = min(maxValue, max(minValue, newValue))
+                            
+                            if abs(clampedValue - value) > 0.01 {
+                                withAnimation(.interactiveSpring()) {
+                                    value = clampedValue
+                                }
+                            }
+                        }
+                        .onEnded { _ in
+                            withAnimation(.spring()) {
+                                dragOffset = 0
+                                value = round(value)
+                            }
+                        }
+                )
             }
             .frame(height: 50)
-            
-            // Slider control (scrollable and interactive)
-            Slider(
-                value: $value,
-                in: minValue...maxValue,
-                step: 1
-            )
-            .tint(Color.blue)
+            .clipped()
         }
     }
 }

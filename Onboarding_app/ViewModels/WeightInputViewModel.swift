@@ -60,7 +60,7 @@ class WeightInputViewModel: ObservableObject {
             )
         } else {
             return BMIMessage(
-                title: "👌wYour BMI is \(roundedBMI) which is considered obese",
+                title: "👌Your BMI is \(roundedBMI) which is considered obese",
                 subtitle: "Let's work together to reach your goals"
             )
         }
