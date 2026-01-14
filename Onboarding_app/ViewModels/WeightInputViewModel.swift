@@ -78,6 +78,10 @@ class WeightInputViewModel: ObservableObject {
     }
     
     func handleNext() {
+        // Save data
+        UserDefaults.standard.set(weight, forKey: "userWeight")
+        UserDefaults.standard.set(isKilograms, forKey: "weightUnitIsKg")
+        
         shouldNavigateToNext = true
         print("Weight selected: \(weight) \(isKilograms ? "kg" : "lbs")")
     }
