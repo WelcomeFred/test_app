@@ -12,6 +12,15 @@ struct BirthYearView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            birthYearContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    GoalSelectionView()
+                }
+        }
+    }
+    
+    private var birthYearContent: some View {
         ZStack {
             // Main background
             Color.white
