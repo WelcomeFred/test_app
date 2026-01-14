@@ -12,6 +12,15 @@ struct HeightInputView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            heightInputContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    BirthYearView()
+                }
+        }
+    }
+    
+    private var heightInputContent: some View {
         ZStack {
             // Main background
             Color.white
@@ -29,8 +38,6 @@ struct HeightInputView: View {
                             .scaledToFit()
                             .frame(width: 42, height: 42)
                             .padding(12)
-                            .background(Color.gray.opacity(0.15))
-                            .clipShape(Circle())
                     }
                     .frame(width: 42, height: 42)
                     
