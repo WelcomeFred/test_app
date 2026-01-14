@@ -12,6 +12,15 @@ struct GoalSelectionView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            goalSelectionContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    TargetWeightView()
+                }
+        }
+    }
+    
+    private var goalSelectionContent: some View {
         ZStack {
             // Main background
             Color.white
