@@ -26,17 +26,14 @@ class WeightInputViewModel: ObservableObject {
     }
     
     var minWeight: Double {
-        isKilograms ? 30.0 : 66.0 // 30 kg = ~66 lbs
+        isKilograms ? 30.0 : 66.0
     }
     
     var maxWeight: Double {
-        isKilograms ? 200.0 : 440.0 // 200 kg = ~440 lbs
+        isKilograms ? 200.0 : 440.0
     }
     
     var bmiMessage: BMIMessage? {
-        // Simple BMI calculation (assuming average height for demo)
-        // BMI = weight (kg) / height (m)^2
-        // For demo purposes, assuming height of 1.75m
         let heightInMeters = 1.75
         let weightInKg = isKilograms ? weight : weight * 0.453592
         let bmi = weightInKg / (heightInMeters * heightInMeters)
@@ -68,12 +65,9 @@ class WeightInputViewModel: ObservableObject {
     
     func selectUnit(isKilograms: Bool) {
         if isKilograms != self.isKilograms {
-            // Convert weight when switching units
             if isKilograms {
-                // Convert from lbs to kg
                 weight = weight * 0.453592
             } else {
-                // Convert from kg to lbs
                 weight = weight / 0.453592
             }
             self.isKilograms = isKilograms

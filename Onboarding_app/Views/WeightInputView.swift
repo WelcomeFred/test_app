@@ -12,6 +12,15 @@ struct WeightInputView: View {
     @Environment(\.dismiss) var dismiss
     
     var body: some View {
+        NavigationStack {
+            weightInputContent
+                .navigationDestination(isPresented: $viewModel.shouldNavigateToNext) {
+                    HeightInputView()
+                }
+        }
+    }
+    
+    private var weightInputContent: some View {
         ZStack {
             // Main background
             Color(red: 0.96, green: 0.95, blue: 0.93)
